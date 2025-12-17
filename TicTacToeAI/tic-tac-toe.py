@@ -86,7 +86,7 @@ class TicAI:
     def play_game(self):
         """Main game loop."""
         print("🎮 Welcome to Tic-Tac-Toe!")
-        print("I’m Kimu 🤖 and I never miss a move.")
+        print("I’m Kimu 😺 and I never miss a move.")
         print("You play as 'X', I play as 'O'.")
         print("Choose positions from 0 to 8 as shown below:\n")
         print(" 0 | 1 | 2 ")
@@ -126,7 +126,7 @@ class TicAI:
             self.print_board()
 
             if self.is_winner(self.kimu):
-                print("🤖 Kimu wins! That was a good game.")
+                print("😸Kimu wins! That was a good game.")
                 break
             if self.is_board_full():
                 print("🤝 It's a tie! Nobody wins this one.")
@@ -136,3 +136,4 @@ class TicAI:
 if __name__ == "__main__":
     game = TicAI()
     game.play_game()
+
