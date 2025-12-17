@@ -9,7 +9,7 @@ with open("movies.json", "r", encoding="utf-8") as f:
 ALL_GENRES = sorted({g for m in MOVIES for g in m["genres"]})
 
 
-# ---------- HELPERS ----------
+# ---------- FUZZY-HELPERS ----------
 
 def fuzzy_match(text, choices):
     match, score, _ = process.extractOne(
@@ -72,7 +72,7 @@ def recommend_by_genre(user_genre):
         print(f"{i}. {m['title']} ({', '.join(m['genres'])})")
 
 
-# ---------- CHAT LOOP ----------
+# ---------- CHAT-MENU LOOP ----------
 
 def show_menu():
     print("""
@@ -118,3 +118,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
