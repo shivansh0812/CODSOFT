@@ -3,93 +3,97 @@ import math
 
 class TicAI:
     def __init__(self):
-        # Initialize a 3x3 board with empty spaces
+        # Initialize a 3x3 board
         self.board = [' ' for _ in range(9)]
         self.human = 'X'
-        self.ai = 'O'
+        self.kimu = 'O'
 
     def print_board(self):
-        """Displays the current state of the board."""
+        """Display the current board state."""
         for i in range(0, 9, 3):
-            row = f" {self.board[i]} | {self.board[i + 1]} | {self.board[i + 2]} "
-            print(row)
+            print(f" {self.board[i]} | {self.board[i + 1]} | {self.board[i + 2]} ")
             if i < 6:
                 print("---|---|---")
-        print("\n")
+        print()
 
     def is_winner(self, player):
-        """Checks if a specific player has won."""
-        # Winning combinations: rows, columns, diagonals
+        """Check if the given player has won."""
         win_conditions = [
-            (0, 1, 2), (3, 4, 5), (6, 7, 8),  # Rows
-            (0, 3, 6), (1, 4, 7), (2, 5, 8),  # Columns
-            (0, 4, 8), (2, 4, 6)  # Diagonals
+            (0, 1, 2), (3, 4, 5), (6, 7, 8),      # Rows
+            (0, 3, 6), (1, 4, 7), (2, 5, 8),      # Columns
+            (0, 4, 8), (2, 4, 6)                  # Diagonals
         ]
-        for a, b, c in win_conditions:
-            if self.board[a] == self.board[b] == self.board[c] == player:
-                return True
-        return False
+        return any(self.board[a] == self.board[b] == self.board[c] == player
+                   for a, b, c in win_conditions)
 
     def is_board_full(self):
-        """Checks if there are no empty spots left."""
+        """Check if the board is full."""
         return ' ' not in self.board
 
     def get_available_moves(self):
-        """Returns a list of indices where the board is empty."""
+        """Return indices of empty spots."""
         return [i for i, spot in enumerate(self.board) if spot == ' ']
 
     def minimax(self, depth, is_maximizing):
         """
-        The Minimax algorithm.
-        Returns +10 if Kimu (AI) wins, -10 if Human wins, 0 for Tie.
+        Minimax algorithm.
+        +10 → Kimu wins
+        -10 → Human wins
+        0   → Tie
         """
-        # Base cases: Check for terminal states (win/loss/draw)
-        if self.is_winner(self.ai):
-            return 10 - depth  # Prefer winning sooner
+        if self.is_winner(self.kimu):
+            return 10 - depth
         if self.is_winner(self.human):
-            return -10 + depth  # Prefer losing later
+            return -10 + depth
         if self.is_board_full():
             return 0
 
         if is_maximizing:
             best_score = -math.inf
             for move in self.get_available_moves():
-                self.board[move] = self.ai
+                self.board[move] = self.kimu
                 score = self.minimax(depth + 1, False)
-                self.board[move] = ' '  # Undo move
-                best_score = max(score, best_score)
+                self.board[move] = ' '
+                best_score = max(best_score, score)
             return best_score
         else:
             best_score = math.inf
             for move in self.get_available_moves():
                 self.board[move] = self.human
                 score = self.minimax(depth + 1, True)
-                self.board[move] = ' '  # Undo move
-                best_score = min(score, best_score)
+                self.board[move] = ' '
+                best_score = min(best_score, score)
             return best_score
 
     def get_best_move(self):
-        """Finds the optimal move for the AI using Minimax."""
+        """Determine Kimu's best move."""
         best_score = -math.inf
-        move = None
+        best_move = None
 
         print("Kimu is thinking...")
-        # Check all available moves and pick the one with the highest minimax score
-        for i in self.get_available_moves():
-            self.board[i] = self.ai
+
+        for move in self.get_available_moves():
+            self.board[move] = self.kimu
             score = self.minimax(0, False)
-            self.board[i] = ' '  # Undo move
+            self.board[move] = ' '
 
             if score > best_score:
                 best_score = score
-                move = i
-        return move
+                best_move = move
+
+        return best_move
 
     def play_game(self):
         """Main game loop."""
-        print("Welcome to Tic-Tac-Toe AI- me Kimu!")
-        print("You are 'X' and I choose 'O'.")
-        print("Enter positions 0-8 (0 is top-left, 8 is bottom-right).\n")
+        print("🎮 Welcome to Tic-Tac-Toe!")
+        print("I’m Kimu 🤖 and I never miss a move.")
+        print("You play as 'X', I play as 'O'.")
+        print("Choose positions from 0 to 8 as shown below:\n")
+        print(" 0 | 1 | 2 ")
+        print("---|---|---")
+        print(" 3 | 4 | 5 ")
+        print("---|---|---")
+        print(" 6 | 7 | 8 \n")
 
         self.print_board()
 
@@ -97,35 +101,35 @@ class TicAI:
             # --- Human Turn ---
             while True:
                 try:
-                    move = int(input("Enter your move (0-8): "))
+                    move = int(input("Your move (0-8): "))
                     if move in self.get_available_moves():
                         self.board[move] = self.human
                         break
                     else:
-                        print("Invalid move. Spot already taken or is out of range.")
+                        print("That spot is not available. Try again.")
                 except ValueError:
-                    print("Please enter a number.")
+                    print("Please enter a valid number between 0 and 8.")
 
             self.print_board()
 
             if self.is_winner(self.human):
-                print("Congratulations! You won!")
+                print("🎉 You won! Well played.")
                 break
             if self.is_board_full():
-                print("It's a Tie! Don't know if it's good for you or bad for me ;)")
+                print("🤝 It's a tie! Looks like we're evenly matched.")
                 break
 
-            # --- (Kimu's) AI Turn ---
+            # --- Kimu's Turn ---
             ai_move = self.get_best_move()
-            self.board[ai_move] = self.ai
+            self.board[ai_move] = self.kimu
             print(f"Kimu chose position {ai_move}")
             self.print_board()
 
-            if self.is_winner(self.ai):
-                print("Kimu Wins! Better luck next time.")
+            if self.is_winner(self.kimu):
+                print("🤖 Kimu wins! That was a good game.")
                 break
             if self.is_board_full():
-                print("It's a Tie!, Don't know if it's good for you or bad for me ;)")
+                print("🤝 It's a tie! Nobody wins this one.")
                 break
 
 
